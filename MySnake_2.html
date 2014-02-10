@@ -7,8 +7,8 @@
 <body>
 
 <h1>贪吃蛇大战</h1>
-<h3>比赛规则: 碰头前, 看谁长得长, 可以咬掉对方尾巴,碰到对方头比赛结束</h3>
-	<p>红方: 方向键控制方向; 蓝方: wsad控制方向</p>
+<h3>比赛规则: 长度先到达9的一方胜利(可以咬掉对方尾巴)</h3>
+	<h4>红方: 方向键控制方向; 蓝方: wsad控制方向</h4>
 <canvas id="myCanvas" width="320" height="320" style="border: solid 1px #222; background-color: #111; color: #CCC;">
     Your browser does not support the canvas element.
 </canvas>
@@ -24,29 +24,25 @@
 
     var c = document.getElementById("myCanvas");
     var cxt = c.getContext("2d");
-	
-    function drawGameOver() {
+	//画gameover
+    function drawGameOver(winner) {
         cxt.fillStyle = '#FFF';
         cxt.font = '30px Arial';
-        cxt.fillText('Game Over!', 100, 120);
+	    cxt.fillText(winner + " wins", 100, 120);
     }
 
-
+    //第一条蛇的身体
     var positions = [];
-    positions[0] = {
-        x: 0,
-        y: 0
-    };
-    positions[1] = {
-        x: 1,
-        y: 0
-    };
-    positions[2] = {
-        x: 2,
-        y: 0
-    };
+	var num = 3;
+	for(var i=0; i < num; i++){
+	    positions[i] = {
+		    x: i,
+            y: 0
+		};
+	}
+
+	//第二条蛇的身体
 	var positions2 = [{x: 39, y: 0}, {x:38, y: 0}, {x: 37, y: 0}];
-	
     var foodPositions = {
         x: -1,
         y: -1
@@ -74,12 +70,12 @@
             cxt.fillStyle = color;
             cxt.fillRect(p[p.length - 1].x * width - 1, p[p.length -1].y * height - 1, height + 2, width + 2);
     }
-
+    //从画布上清楚蛇的某位
     function clearColor(point) {
         cxt.fillStyle = "#111";
         cxt.fillRect(point.x * width - 1, point.y * height - 1, height + 2, width + 2);
     }
-
+    //判断蛇是否咬到自己
     function IsInSnake(ps, p) {
         for (i = 0; i < ps.length - 1; i++) {
             if (ps[i].x == p.x && ps[i].y == p.y) {
@@ -92,27 +88,56 @@
 //-------------------------------以下两个为主要函数(实现框架)-----------------------------------------
     var moveAsync = eval(Jscex.compile("async", function (p, p2) {
         while (true) {
-            moveSnake(p, direction, "red");
-            moveSnake(p2, direction2, "blue");
-            if (gameOver) {
-                drawGameOver();
-                    document.getElementById("btnReset").disabled = "";
-                    break;
-            }
+            moveSnake(p, direction);
+            moveSnake(p2, direction2);
+			//切对方尾巴
+			for(var i=0; i < p.length - 1; i++){
+				if(p2[p2.length - 1].x == p[i].x && p2[p2.length - 1].y == p[i].y){
+					for(var j=0; j < i; j++){
+						p.shift();
+					}
+				}
+			}
+			for(var i=0; i < p2.length - 1; i++){
+				if(p[p.length - 1].x == p2[i].x && p[p.length - 1].y == p2[i].y){
+					for(var j=0; j < i; j++){
+						p2.shift();
+					}
+				}
+			}	
+			if(p.length == 9 || p2.length == 9){
+				if(p.length < p2.length){
+					drawGameOver("blue");}
+				else if(p.length > p2.length){
+					drawGameOver("red");}					
+				else{
+					drawGameOver("Nobody");}
+				document.getElementById("btnReset").disabled = "";
+				break;	
+			}
+			drawSnakeAndFood(p, "red");
+			drawSnakeAndFood(p2, "blue");
             document.getElementById("snake1").value = p.length;
             document.getElementById("snake2").value = p2.length;
-            $await(Jscex.Async.sleep(100));
+	/*		
+			if (gameOver) {
+                drawGameOver(winner);
+                document.getElementById("btnReset").disabled = "";
+                break;
+            }*/
+            $await(Jscex.Async.sleep(110));
         }
     }));
-	
-	function moveSnake(p, direction, color) {
+	//按蛇移动方向改变代表蛇的数组
+	function moveSnake(p, direction) {
 /* 	    if (p[p.length - 1].x < 0 || p[p.length - 1].x > 39 || p[p.length - 1].y < 0 || p[p.length - 1].y > 39 ) { 
 			gameOver = true;
 		} 
-	*/
+	
 		if ( IsInSnake(p, p[p.length - 1]) ) {
 			gameOver = true;
-		}
+		}*/
+		
 		if (p[p.length - 1].x < 0){
 			p[p.length - 1].x = 39;
 		}
@@ -158,9 +183,15 @@
 				y: p[p.length - 1].y + 1
 			});
 		}
-
-		drawSnakeAndFood(p, color);
-
+		//咬到自己尾巴, 尾巴掉了
+/*		for(var i=0; i < p.length - 1; i++){
+			if(p[p.length - 1].x == p[i].x && p[p.length - 1].y == p[i].y){
+				for(var j=0; j < i; j++){
+					p.shift();
+				}
+			}
+		}*/
+		
 	}
 	
 
