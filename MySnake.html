@@ -54,7 +54,7 @@
     var height = 8;
     var width = 8;
     var direction = "right";
-	var direction2 = "left"; //direction of snake2
+    var direction2 = "left"; //direction of snake2
 
 
 
@@ -71,8 +71,8 @@
             cxt.fillStyle = "#D1EEEE";
             cxt.fillRect(p[i].x * width, p[i].y * height, height, width);
         }
-		cxt.fillStyle = color;
-		cxt.fillRect(p[p.length - 1].x * width - 1, p[p.length -1].y * height - 1, height + 2, width + 2);
+            cxt.fillStyle = color;
+            cxt.fillRect(p[p.length - 1].x * width - 1, p[p.length -1].y * height - 1, height + 2, width + 2);
     }
 
     function clearColor(point) {
@@ -92,15 +92,15 @@
 //-------------------------------以下两个为主要函数(实现框架)-----------------------------------------
     var moveAsync = eval(Jscex.compile("async", function (p, p2) {
         while (true) {
-			moveSnake(p, direction, "red");
-			moveSnake(p2, direction2, "blue");
-			if (gameOver) {
-				drawGameOver();
-				document.getElementById("btnReset").disabled = "";
-				break;
-			}
-			document.getElementById("snake1").value = p.length;
-			document.getElementById("snake2").value = p2.length;
+            moveSnake(p, direction, "red");
+            moveSnake(p2, direction2, "blue");
+            if (gameOver) {
+                drawGameOver();
+                    document.getElementById("btnReset").disabled = "";
+                    break;
+            }
+            document.getElementById("snake1").value = p.length;
+            document.getElementById("snake2").value = p2.length;
             $await(Jscex.Async.sleep(100));
         }
     }));
@@ -183,10 +183,9 @@
     function reSet() {
         cxt.clearRect(0, 0, 1000, 1000)
         direction = "right";
-		direction2 = "left"
+        direction2 = "left"
         positions = [{x: 0, y: 0}, {x:1, y: 0}, {x: 2, y: 0}];
-		positions2 = [{x: 39, y: 0}, {x:38, y: 0}, {x: 37, y: 0}];
-
+        positions2 = [{x: 39, y: 0}, {x:38, y: 0}, {x: 37, y: 0}];
         gameOver = false;
         document.getElementById("btnReset").disabled = "disabled";
         moveAsync(positions, positions2).start();
@@ -196,7 +195,6 @@
         var arrHex = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]; var strHex = "#";
         var index;
         for (var i = 0; i < 6; i++) {
-           
             index = Math.round(Math.random() * 15);
             strHex += arrHex[index];
         }
